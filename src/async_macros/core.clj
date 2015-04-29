@@ -15,7 +15,7 @@
 (if-cljs
  (do
    (require '[cljs.core.async :refer [<! >!]])
-   (require-macros [cljs.core.async.macros :refer [go]]))
+   (require-macros '[cljs.core.async.macros :refer [go]]))
  (require '[clojure.core.async :refer [<! >! <!! go]]))
 
 (defn throwable?
@@ -33,7 +33,7 @@
 (defmacro <? [ch]
   `(throw-err (<! ~ch)))
 
-(if-cljs?
+(if-cljs
  nil
   (defmacro <!? [ch]
     `(throw-err (<!! ~ch))))
