@@ -33,7 +33,8 @@
 (defmacro <? [ch]
   `(throw-err (<! ~ch)))
 
-(when-not cljs?
+(if-cljs?
+ nil
   (defmacro <!? [ch]
     `(throw-err (<!! ~ch))))
 
