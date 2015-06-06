@@ -12,7 +12,7 @@
   [then else]
   (if (cljs-env? &env) then else))
 
-(if-cljs
+#_(if-cljs
  (do
    (require '[cljs.core.async :refer [<! >!]])
    (require-macros '[cljs.core.async.macros :refer [go]]))
