@@ -5,4 +5,4 @@
 
 (defn ^:export run
   []
-  (run-all-tests #"async-macros.*_test"))
+  (run-all-tests #"async-macros.*-test"))

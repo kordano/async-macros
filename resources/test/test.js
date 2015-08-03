@@ -7,8 +7,7 @@ page.onConsoleMessage = function (message) {
 
 page.open(url, function (status) {
     page.evaluate(function(){
-        // Use your namespace instead of `cljs-test-example`:
-        async-macros.test.run();
+        async_macros.test.run();
     });
     phantom.exit(0);
 });
