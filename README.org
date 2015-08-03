@@ -1,0 +1,34 @@
+#+TITLE: async-macros
+#+CATEGORY: async-macros
+#+STARTUP: overview 
+#+STARTUP: hidestars
+#+PROPERTY: Assigned_to_ALL kordano
+#+OPTIONS: d:nil
+**** Overview
+
+A collection of clojurescript =core.async= macros.
+
+**** Usage
+
+TBD
+
+**** TODOs
+***** TODO add unit tests 					       :test:
+ DEADLINE: <2015-08-03 Mo>
+ :LOGBOOK:  
+ CLOCK: [2015-08-03 Mo 13:59]--[2015-08-03 Mo 15:36] =>  1:37
+ CLOCK: [2015-08-03 Mo 13:41]--[2015-08-03 Mo 13:59] =>  0:18
+ :END:      
+ :PROPERTIES:
+ :Created: [2015-08-03 Mo 13:35]
+ :Assigned_to: kordano
+ :END:
+**** References
+**** License
+
+Copyright © 2015 Konrad Kühne
+
+Distributed under the Eclipse Public License either version 1.0 or (at
+your option) any later version.
+
+
