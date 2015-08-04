@@ -14,7 +14,7 @@ TBD
 
 **** TODOs
 ***** TODO add unit tests 					       :test:
- DEADLINE: <2015-08-03 Mo>
+ DEADLINE: <2015-08-05 Mi>
  :LOGBOOK:  
  CLOCK: [2015-08-03 Mo 15:44]--[2015-08-03 Mo 17:54] =>  2:10
  CLOCK: [2015-08-03 Mo 13:59]--[2015-08-03 Mo 15:36] =>  1:37

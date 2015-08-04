@@ -22,8 +22,9 @@
   "Same as core.async <! but throws an exception if the channel returns a
   throwable object. Also will not crash if channel is nil."
   [ch]
-  `(throw-if-throwable (let [ch# ~ch] (when ch# (<! ch#)))))
+  `(throw-if-throwable (let [ch# ~ch] (when ch# (cljs.core.async/<! ch#)))))
 
+(comment
 
 (defmacro alts?
   "Same as core.async alts! but throws an exception if the channel returns a
@@ -38,13 +39,13 @@
   [& clauses]
   `(throw-if-throwable (alt! ~@clauses)))
 
-#?(:cljs
-    (defmacro go-try
-      "Asynchronously executes the body in a go block. Returns a channel which
+
+(defmacro go-try
+  "Asynchronously executes the body in a go block. Returns a channel which
   will receive the result of the body when completed or an exception if one
   is thrown."
-      [& body]
-      `(go (try ~@body (catch js/Error e# e#)))))
+  [& body]
+  `(go (try ~@body (catch js/Error e# e#))))
 
 
 #?(:cljs
@@ -266,4 +267,4 @@
                    (>! ~res-ch e#))
                  (finally (async/close! ~res-ch))))
         ~res-ch))))
-
+)
