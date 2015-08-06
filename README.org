@@ -13,9 +13,10 @@ A collection of clojurescript =core.async= macros.
 TBD
 
 **** TODOs
-***** TODO add unit tests 					       :test:
- DEADLINE: <2015-08-05 Mi>
+***** STARTED add unit tests					       :test:
+ DEADLINE: <2015-08-07 Fr>
  :LOGBOOK:  
+ - State "STARTED"    from "TODO"       [2015-08-05 Mi 13:45]
  CLOCK: [2015-08-03 Mo 15:44]--[2015-08-03 Mo 17:54] =>  2:10
  CLOCK: [2015-08-03 Mo 13:59]--[2015-08-03 Mo 15:36] =>  1:37
  CLOCK: [2015-08-03 Mo 13:41]--[2015-08-03 Mo 13:59] =>  0:18
