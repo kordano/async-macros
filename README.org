@@ -14,7 +14,7 @@ TBD
 
 **** TODOs
 ***** STARTED add unit tests					       :test:
- DEADLINE: <2015-08-07 Fr>
+ DEADLINE: <2015-08-09 Sun>
  :LOGBOOK:  
  - State "STARTED"    from "TODO"       [2015-08-05 Mi 13:45]
  CLOCK: [2015-08-03 Mo 15:44]--[2015-08-03 Mo 17:54] =>  2:10
