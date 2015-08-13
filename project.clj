@@ -6,7 +6,8 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.28"]
                  [org.clojure/core.async "0.1.338.0-5c5012-alpha"]]
-  :plugins [[lein-cljsbuild "1.0.6"]]
+  :plugins [[lein-cljsbuild "1.0.6"]
+            [lein-figwheel "0.3.4"]]
   :source-paths ["src"] 
   :clean-targets ^{:protect false}["target" "resources/test/compiled.js"]
   :cljsbuild {:builds
@@ -18,4 +19,5 @@
               :test-commands
               {"test" ["phantomjs"
                        "resources/test/test.js"
-                       "resources/test/test.html"]}})
+                       "resources/test/test.html"]}}
+  :figwheel {:nrepl-port 7888})

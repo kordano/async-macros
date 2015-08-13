@@ -24,6 +24,29 @@
   [ch]
   `(throw-if-throwable (let [ch# ~ch] (when ch# (cljs.core.async/<! ch#)))))
 
+(defmacro go-try
+  "Asynchronously executes the body in a go block. Returns a channel which
+  will receive the result of the body when completed or an exception if one
+  is thrown."
+  [& body]
+  `(cljs.core.async.macros/go (try ~@body (catch js/Error e# e#))))
+
+(defmacro <<!
+  "Takes multiple results from a channel and returns them as a vector.
+  The input channel must be closed."
+  [ch]
+  `(let [ch# ~ch]
+     (cljs.core.async/<! (cljs.core.async/into [] ch#))))
+
+(defmacro <<?
+  "Takes multiple results from a channel and returns them as a vector.
+  Throws if any result is an exception."
+  [ch]
+  `(->> (<<! ~ch)
+        (map throw-if-throwable)
+        ; doall to check for throwables right away
+        (doall)))
+
 (comment
 
 (defmacro alts?
@@ -40,12 +63,7 @@
   `(throw-if-throwable (alt! ~@clauses)))
 
 
-(defmacro go-try
-  "Asynchronously executes the body in a go block. Returns a channel which
-  will receive the result of the body when completed or an exception if one
-  is thrown."
-  [& body]
-  `(go (try ~@body (catch js/Error e# e#))))
+
 
 
 #?(:cljs
@@ -96,14 +114,7 @@
   `(let [ch# ~ch]
      (<! (async/into [] ch#))))
 
-(defmacro <<?
-  "Takes multiple results from a channel and returns them as a vector.
-  Throws if any result is an exception."
-  [ch]
-  `(->> (<<! ~ch)
-        (map throw-if-throwable)
-        ; doall to check for throwables right away
-        (doall)))
+
 
 #?(:cljs
  (defmacro <!*
