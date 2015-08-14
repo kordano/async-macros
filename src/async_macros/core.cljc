@@ -1,5 +1,5 @@
 (ns async-macros.core
-  #?(:cljs (:require [cljs.core.async :refer [<! >! alts!] :as async]))
+  #?(:cljs (:require [cljs.core.async :refer [<! >! alts! into chan] :as async]))
   #?(:cljs (:require-macros [cljs.core.async.macros :refer [go go-loop alt!]])))
 
 
@@ -47,7 +47,12 @@
         ; doall to check for throwables right away
         (doall)))
 
-(comment
+(defmacro alt?
+  "Same as core.async alt! but throws an exception if the channel returns a
+  throwable object."
+  [& clauses]
+  `(throw-if-throwable (cljs.core.async.macros/alt! ~@clauses)))
+
 
 (defmacro alts?
   "Same as core.async alts! but throws an exception if the channel returns a
@@ -56,56 +61,34 @@
   `(let [[val# port#] (alts! ~ports)]
      [(throw-if-throwable val#) port#]))
 
-(defmacro alt?
-  "Same as core.async alt! but throws an exception if the channel returns a
-  throwable object."
-  [& clauses]
-  `(throw-if-throwable (alt! ~@clauses)))
-
-
-
-
-
-#?(:cljs
- (defmacro go-retry
-   [{:keys [exception retries delay error-fn]
-     :or {error-fn nil, exception js/Error, retries 5, delay 1}} & body]
-   `(let [error-fn# ~error-fn]
-      (go-loop
-          [retries# ~retries]
-        (let [res# (try ~@body (catch js/Error e# e#))]
-          (if (and (instance? ~exception res#)
-                   (or (not error-fn#) (error-fn# res#))
-                   (> retries# 0))
-            (do
-              (<! (async/timeout (* ~delay 1000)))
-              (recur (dec retries#)))
-            res#))))))
-
-#?(:cljs
-   (defmacro go-try>
-     "Same as go-try, but puts errors directly on a channel and returns
+(defmacro go-try>
+  "Same as go-try, but puts errors directly on a channel and returns
   nil on the resulting channel."
-     [err-chan & body]
-     `(go (try
-            ~@body
-            (catch js/Error e#
-              (>! ~err-chan e#))))))
-
-#?(:cljs
- (defmacro go-loop-try>
-   "Put throwables arising in the go-loop on an error channel."
-   [err-chan bindings & body]
-   `(go (try
-          (loop ~bindings
-            ~@body)
-          (catch js/Error e#
-            (>! ~err-chan e#))))))
+  [err-chan & body]
+  `(cljs.core.async.macros/go
+     (try
+       ~@body
+       (catch js/Error e#
+         (>! ~err-chan e#)))))
 
 (defmacro go-loop-try
   "Returns result of the loop or a throwable in case of an exception."
   [bindings & body]
   `(go-try (loop ~bindings ~@body) ))
+
+(comment
+
+
+(defmacro go-loop-try>
+  "Put throwables arising in the go-loop on an error channel."
+  [err-chan bindings & body]
+  `(go (try
+         (loop ~bindings
+           ~@body)
+         (catch js/Error e#
+           (>! ~err-chan e#)))))
+
+
 
 (defmacro <<!
   "Takes multiple results from a channel and returns them as a vector.
@@ -116,19 +99,18 @@
 
 
 
-#?(:cljs
- (defmacro <!*
-   "Takes one result from each channel and returns them as a collection.
+(defmacro <!*
+  "Takes one result from each channel and returns them as a collection.
   The results maintain the order of channels."
-   [chs]
-   `(let [chs# ~chs]
-      (loop [chs# chs#
-             results# (cljs.core.PersistentQueue/EMPTY)]
-        (if-let [head# (first chs#)]
-          (->> (<! head#)
-               (conj results#)
-               (recur (rest chs#)))
-          (vec results#))))))
+  [chs]
+  `(let [chs# ~chs]
+     (loop [chs# chs#
+            results# (cljs.core.PersistentQueue/EMPTY)]
+       (if-let [head# (first chs#)]
+         (->> (<! head#)
+              (conj results#)
+              (recur (rest chs#)))
+         (vec results#)))))
 
 #?(:cljs
    (defmacro <?*

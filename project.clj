@@ -8,10 +8,15 @@
                  [org.clojure/core.async "0.1.338.0-5c5012-alpha"]]
   :plugins [[lein-cljsbuild "1.0.6"]
             [lein-figwheel "0.3.4"]]
-  :source-paths ["src"] 
-  :clean-targets ^{:protect false}["target" "resources/test/compiled.js"]
+  :source-paths ["src" "src-cljs"] 
+  :clean-targets ^{:protect false}["target" "out" "resources/test/compiled.js"]
   :cljsbuild {:builds
-              {:test
+              {:dev
+               {:source-paths ["src-cljs"]
+                :compiler {:output-to "out/main.js"
+                           :optimizations :whitespace
+                           :pretty-print true}}
+               :test
                {:source-paths ["test"]
                 :compiler {:output-to "resources/test/compiled.js"
                            :optimizations :whitespace

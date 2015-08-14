@@ -4,6 +4,4 @@
 
 (enable-console-print!)
 
-(defn ^:export run []
-  (run-tests ['async-macros.core-test])
-  (println "All tests finished!"))
+(defn ^:export run [])
