@@ -69,7 +69,7 @@
      (try
        ~@body
        (catch js/Error e#
-         (>! ~err-chan e#)))))
+         (cljs.core.async/>! ~err-chan e#)))))
 
 (defmacro go-loop-try
   "Returns result of the loop or a throwable in case of an exception."

@@ -16,8 +16,9 @@ lein run -m clojure.main node_repl.cljs
 ***** STARTED create cljs repl                                      :feature:
      DEADLINE: <2015-08-14 Fri>
      :LOGBOOK:  
+     CLOCK: [2015-08-14 Fri 19:01]
      - State "STARTED"    from "TODO"       [2015-08-14 Fri 17:17]
-     CLOCK: [2015-08-14 Fri 17:00]
+     CLOCK: [2015-08-14 Fri 17:00]--[2015-08-14 Fri 19:01] =>  2:01
      :END:      
      :PROPERTIES:
      :Created: [2015-08-14 Fri 15:17]
