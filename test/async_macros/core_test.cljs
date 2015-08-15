@@ -82,7 +82,21 @@
                                       (<<? ch))))))
            (done))))
 
-(deftest )
+
+(deftest go-with-throwable-and-error-chan
+  (let [err-chan (chan)]
+    (async done
+           (go
+             (is (thrown? js/Error
+                          (do
+                            (go-try> err-chan (let [ch (chan 2)]
+                                                (>! ch "1")
+                                                (>! ch (js/Error.))
+                                                (close! ch)
+                                                (<<? ch)))
+                            (<? err-chan))))
+             (done))))
+  )
 
 (run-tests)
 
