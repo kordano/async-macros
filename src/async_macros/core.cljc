@@ -2,7 +2,6 @@
   #?(:cljs (:require [cljs.core.async :refer [<! >! alts! into chan] :as async]))
   #?(:cljs (:require-macros [cljs.core.async.macros :refer [go go-loop alt!]])))
 
-
 #?(:cljs
     (defn throwable?
       "Check if it is throwable."
@@ -17,19 +16,11 @@
      [x]
      (when (throwable? x) (throw x)) x))
 
-
 (defmacro <?
   "Same as core.async <! but throws an exception if the channel returns a
   throwable object. Also will not crash if channel is nil."
   [ch]
   `(throw-if-throwable (let [ch# ~ch] (when ch# (cljs.core.async/<! ch#)))))
-
-(defmacro go-try
-  "Asynchronously executes the body in a go block. Returns a channel which
-  will receive the result of the body when completed or an exception if one
-  is thrown."
-  [& body]
-  `(cljs.core.async.macros/go (try ~@body (catch js/Error e# e#))))
 
 (defmacro <<!
   "Takes multiple results from a channel and returns them as a vector.
@@ -53,13 +44,19 @@
   [& clauses]
   `(throw-if-throwable (cljs.core.async.macros/alt! ~@clauses)))
 
-
 (defmacro alts?
   "Same as core.async alts! but throws an exception if the channel returns a
   throwable object."
   [ports]
   `(let [[val# port#] (alts! ~ports)]
      [(throw-if-throwable val#) port#]))
+
+(defmacro go-try
+  "Asynchronously executes the body in a go block. Returns a channel which
+  will receive the result of the body when completed or an exception if one
+  is thrown."
+  [& body]
+  `(cljs.core.async.macros/go (try ~@body (catch js/Error e# e#))))
 
 (defmacro go-try>
   "Same as go-try, but puts errors directly on a channel and returns
@@ -76,28 +73,26 @@
   [bindings & body]
   `(go-try (loop ~bindings ~@body) ))
 
-(comment
-
-
 (defmacro go-loop-try>
   "Put throwables arising in the go-loop on an error channel."
   [err-chan bindings & body]
-  `(go (try
-         (loop ~bindings
-           ~@body)
-         (catch js/Error e#
-           (>! ~err-chan e#)))))
+  `(cljs.core.async.macros/go
+     (try
+       (loop ~bindings
+         ~@body)
+       (catch js/Error e#
+         (cljs.core.async/>! ~err-chan e#)))))
 
 
+
+(comment
 
 (defmacro <<!
   "Takes multiple results from a channel and returns them as a vector.
   The input channel must be closed."
   [ch]
   `(let [ch# ~ch]
-     (<! (async/into [] ch#))))
-
-
+     (<! (cljs.core.async/into [] ch#))))
 
 (defmacro <!*
   "Takes one result from each channel and returns them as a collection.

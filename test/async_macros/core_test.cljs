@@ -95,8 +95,7 @@
                                                 (close! ch)
                                                 (<<? ch)))
                             (<? err-chan))))
-             (done))))
-  )
+             (done)))))
 
 (run-tests)
 

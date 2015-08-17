@@ -17,7 +17,7 @@ lein run -m clojure.main node_repl.cljs
       CLOSED: [2015-08-15 Sat 11:29] DEADLINE: <2015-08-14 Fri>
      :LOGBOOK:  
      - State "DONE"       from "STARTED"    [2015-08-15 Sat 11:29]
-     CLOCK: [2015-08-14 Fri 19:01]
+     CLOCK: [2015-08-14 Fri 19:01]--[2015-08-17 Mon 13:09] => 66:08
      - State "STARTED"    from "TODO"       [2015-08-14 Fri 17:17]
      CLOCK: [2015-08-14 Fri 17:00]--[2015-08-14 Fri 19:01] =>  2:01
      :END:      
@@ -40,6 +40,7 @@ lein run -m clojure.main node_repl.cljs
 ***** STARTED add unit tests					       :test:
  DEADLINE: <2015-08-18 Tue>
  :LOGBOOK:  
+ CLOCK: [2015-08-17 Mon 13:09]--[2015-08-17 Mon 14:12] =>  1:03
  CLOCK: [2015-08-13 Thu 11:11]--[2015-08-14 Fri 17:00] => 29:49
  CLOCK: [2015-08-12 Wed 17:13]--[2015-08-12 Wed 17:13] =>  0:00
  - State "STARTED"    from "TODO"       [2015-08-05 Mi 13:45]
