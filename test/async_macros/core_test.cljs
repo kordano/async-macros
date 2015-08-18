@@ -1,11 +1,12 @@
 (ns async-macros.core-test
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [async-macros.core :refer [throwable?] :refer-macros [<? go-try <<? <<! alt?]]
+  (:require [async-macros.core :refer [throwable?] :refer-macros [<? <<? <<! go-try go-try> alt? go-loop-try]]
             [async-macros.test-helpers :refer [latch inc! debug]]
             [cljs.core.async :refer [chan close! take! >!]]
             [cljs.test :refer-macros [deftest is testing async run-tests]]))
 
 (enable-console-print!)
+
 
 (defmethod cljs.test/report [:cljs.test/default :end-run-tests] [m]
   (if (cljs.test/successful? m)
@@ -25,17 +26,20 @@
     (is (= (throwable? (js/Error.)) true))
     (is (= (throwable? (js/Object.)) false))))
 
+
 (deftest identity-chan-is-not-buggy
   (async done
     (go
       (is (= (<! (identity-chan 42)) 42))
       (done))))
 
+
 (deftest take-from-channel-with-throwable
   (async done
          (go
            (is (= (<? (identity-chan 42)) 42))
            (done))))
+
 
 (deftest take-multi-from-channel
   (async done
@@ -51,6 +55,7 @@
                         ch))))))
            (done))))
 
+
 (deftest take-multi-from-channel-with-exception
   (async done
          (go
@@ -62,6 +67,7 @@
                                  ch))))))
            (done))))
 
+
 (deftest alt-with-throwable
   (async done
          (let [c (identity-chan 42)]
@@ -70,6 +76,7 @@
                     (alt? (identity-chan 42)
                           ([c] [c :foo]))))
              (done)))))
+
 
 (deftest go-with-throwable
   (async done
@@ -97,5 +104,39 @@
                             (<? err-chan))))
              (done)))))
 
+(deftest go-loop-with-throwable
+  (async done
+         (go
+           (is (thrown? js/Error
+                        (<?
+                         (go-loop-try
+                          [ch (chan 3)
+                           inputs ["1" (js/Error.) 5]]
+                          (when-not (empty? inputs)
+                            (>! ch (first inputs))
+                            (recur ch (rest inputs)))))))
+           (done))))
+
+#_(deftest go-loop-with-throwable
+  (let [err-chan (chan)]
+    (async done
+           (go
+             (is (thrown? js/Error
+                          (do
+                            (go-loop-try>
+                             err-chan
+                             [ch (chan 2)
+                              inputs ["1" (js/Error.) 5]]
+                             (if (vector? inputs)
+                               (do
+                                 (>! ch (first inputs))
+                                 (recur ch (rest inputs)))
+                               (>! ch inputs)))
+                            (<? err-chan))))
+             (done)))))
+
 (run-tests)
 
+
+(comment
+  )

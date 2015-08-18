@@ -83,10 +83,7 @@
        (catch js/Error e#
          (cljs.core.async/>! ~err-chan e#)))))
 
-
-
 (comment
-
 (defmacro <<!
   "Takes multiple results from a channel and returns them as a vector.
   The input channel must be closed."

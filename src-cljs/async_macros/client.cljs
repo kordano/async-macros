@@ -4,7 +4,7 @@
   (:require [async-macros.core :refer [throwable?]]
             [cljs.core.async :refer [close! chan <! >! alts! into chan]]))
 
-(cemerick.austin.repls/cljs-repl (cemerick.austin/exec-env))
+#_(cemerick.austin.repls/cljs-repl (cemerick.austin/exec-env))
 
 (enable-console-print!)
 
@@ -27,24 +27,29 @@
   (def err-chan (chan))
 
   (go
-    (go-loop-try>
-     err-chan
-     [ch (chan 2)
-      inputs ["1" (js/Error.)]]
-     (do
-       (>! ch (first inputs))
-       (recur ch (rest inputs))))
-    (<? err-chan))
+    (println
+     (try
+       (go-loop-try>
+        err-chan
+        [ch (chan 2)
+         inputs ["1" (js/Error.)]]
+        (do
+          (>! ch (first inputs))
+          (recur ch (rest inputs))))
+       (<? err-chan)
+       (catch js/Error e :fail))))
 
 
   (go
-    (<? (go-try
-         (let [ch (chan 2)]
-           (println (+ 1 2 3))
-           (>! ch "1")
-           (>! ch (js/Error.))
-           (close! ch)
-           (<<? ch)))))
+    (println
+     (try
+       (<? (go-try
+            (let [ch (chan 2)]
+              (>! ch "1")
+              (>! ch (js/Error.))
+              (close! ch)
+              (<<? ch))))
+       (catch js/Error e :fail))))
 
 
   
