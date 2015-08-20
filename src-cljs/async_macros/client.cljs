@@ -65,5 +65,14 @@
                              (<<? ch)))
          (<? err-chan))
        (catch js/Error e :fail)))) 
-  
+
+
+  (go
+    (println
+     (<!
+      (into []
+            (go-for [x (range 10)
+                     :let [y (<! (go 4))]
+                     :while (< x y)]
+                    [x y])))))
   )

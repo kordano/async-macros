@@ -105,7 +105,7 @@
    :while test, :when test. If a top-level entry is nil, it is skipped
   as it cannot be put on channel.
 
-  (<! (async/into [] (go-for [x (range 10) :let [y (<! (go 4))] :while (< x y)] [x y])))"
+  (<! (cljs.core.async/into [] (go-for [x (range 10) :let [y (<! (go 4))] :while (< x y)] [x y])))"
    {:added "1.0"}
    [seq-exprs body-expr]
    (assert-args
@@ -149,7 +149,7 @@
          res-ch (gensym "res_ch__")]
      `(let [~res-ch (cljs.core.async/chan)
             iter# ~(emit-bind res-ch (to-groups seq-exprs))]
-        (cljs.core.async/go (try (<? (iter# ~(second seq-exprs)))
+        (cljs.core.async.macros/go (try (<? (iter# ~(second seq-exprs)))
                  (catch js/Error e#
                    (cljs.core.async/>! ~res-ch e#))
                  (finally (cljs.core.async/close! ~res-ch))))
@@ -248,7 +248,6 @@
              (>! result acc)
              (async/close! result))))
        result)))
-
 
 
 

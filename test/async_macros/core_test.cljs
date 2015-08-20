@@ -1,8 +1,8 @@
 (ns async-macros.core-test
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [async-macros.core :refer [throwable?] :refer-macros [<? <<? <<! go-try go-try> alt? go-loop-try go-loop-try>]]
+  (:require [async-macros.core :refer [throwable?] :refer-macros [<? <<? <<! go-try go-try> alt? go-loop-try go-loop-try> go-for]]
             [async-macros.test-helpers :refer [latch inc! debug]]
-            [cljs.core.async :refer [chan close! take! >!]]
+            [cljs.core.async :refer [chan close! take! >! into]]
             [cljs.test :refer-macros [deftest is testing async run-tests]]))
 
 (enable-console-print!)
@@ -119,7 +119,7 @@
            (done))))
 
 
-(deftest go-loop-with-throwable
+(deftest go-loop-with-throwable-and-chan
   (let [err-chan (chan)]
     (async done
            (go
@@ -128,7 +128,7 @@
                             (go-loop-try>
                              err-chan
                              [c0 (chan 2)
-                              inputs ["1" (js/Error.)]]
+                              inputs ["1" "2"]]
                              (when-not (empty? inputs)
                                (>! c0 (first inputs))
                                (throw (js/Error.))
@@ -136,9 +136,18 @@
                             (<? err-chan))))
              (done)))))
 
+
+(deftest go-list-comprehension
+  (async done
+         (go
+           (is (= [[0 4] [1 4] [2 4] [3 4]]
+                  (<!
+                   (into []
+                         (go-for [x (range 10)
+                                  :let [y (<! (go 4))]
+                                  :while (< x y)]
+                                 [x y])))))
+           (done))))
+
+
 (run-tests)
-
-
-(comment
-  
-  )
