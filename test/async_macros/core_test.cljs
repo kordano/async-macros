@@ -1,6 +1,6 @@
 (ns async-macros.core-test
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [async-macros.core :refer [throwable?] :refer-macros [<? <<? <<! go-try go-try> alt? go-loop-try]]
+  (:require [async-macros.core :refer [throwable?] :refer-macros [<? <<? <<! go-try go-try> alt? go-loop-try go-loop-try>]]
             [async-macros.test-helpers :refer [latch inc! debug]]
             [cljs.core.async :refer [chan close! take! >!]]
             [cljs.test :refer-macros [deftest is testing async run-tests]]))
@@ -110,14 +110,16 @@
            (is (thrown? js/Error
                         (<?
                          (go-loop-try
-                          [ch (chan 3)
-                           inputs ["1" (js/Error.) 5]]
+                          [ch (chan 2)
+                           inputs ["1" "2"]]
                           (when-not (empty? inputs)
                             (>! ch (first inputs))
+                            (throw (js/Error.))
                             (recur ch (rest inputs)))))))
            (done))))
 
-#_(deftest go-loop-with-throwable
+
+(deftest go-loop-with-throwable
   (let [err-chan (chan)]
     (async done
            (go
@@ -125,13 +127,12 @@
                           (do
                             (go-loop-try>
                              err-chan
-                             [ch (chan 2)
-                              inputs ["1" (js/Error.) 5]]
-                             (if (vector? inputs)
-                               (do
-                                 (>! ch (first inputs))
-                                 (recur ch (rest inputs)))
-                               (>! ch inputs)))
+                             [c0 (chan 2)
+                              inputs ["1" (js/Error.)]]
+                             (when-not (empty? inputs)
+                               (>! c0 (first inputs))
+                               (throw (js/Error.))
+                               (recur c0 (rest inputs))))
                             (<? err-chan))))
              (done)))))
 
@@ -139,4 +140,5 @@
 
 
 (comment
+  
   )
